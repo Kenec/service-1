@@ -17,6 +17,6 @@ public class SuchController {
 		RestTemplate restTemplate = new RestTemplate();
 		String result = restTemplate.getForObject(timeUrl, String.class);
 		
-		return "hello, " + suchName + " " + result;
+		return "hello!! " + suchName + " " + result;
 	}
 }
