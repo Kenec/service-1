@@ -5,14 +5,9 @@ phases:
     commands:
       # variable
       - REPOSITORY_URI=839162139045.dkr.ecr.us-east-2.amazonaws.com/opstest-repository
-      - ARTIFACT=opstest
-      - ARTIFACT_TYPE=.jar
-      - TAG_NAME=$REPOSITORY_URI:$ARTIFACT
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
       - echo $AWS_DEFAULT_REGION
-      - echo $ARTIFACT
-      - echo $ARTIFACT_TYPE
       - echo $REPOSITORY_URI
       - echo $TAG_NAME
       # Installation
@@ -49,8 +44,3 @@ phases:
 artifacts:
   files:
     - imagedefinitions.json
-    - target/opstest.jar
-  discard-paths: yes
-cache:
-  paths:
-    - '/root/.m2/**/*'
