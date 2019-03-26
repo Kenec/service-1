@@ -1,0 +1,50 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      # variable
+      - REPOSITORY_URI=839162139045.dkr.ecr.us-east-2.amazonaws.com/opstest-repository
+      - ARTIFACT=opstest
+      - ARTIFACT_TYPE=.jar
+      - TAG_NAME=$REPOSITORY_URI:$ARTIFACT
+      - echo $AWS_DEFAULT_REGION
+      - echo $ARTIFACT
+      - echo $ARTIFACT_TYPE
+      - echo $REPOSITORY_URI
+      - echo $TAG_NAME
+      # Installation
+      - echo Entered the install phase...
+      - apt-get update -y
+      - apt-get install -y software-properties-common
+      - add-apt-repository ppa:openjdk-r/ppa
+      - apt-get update -y
+      - apt-get install -y openjdk-8-jdk
+      - apt-get install -y maven
+    finally:
+      - echo This always runs even if the update or install command fails 
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+    finally:
+      - echo This always runs even if the login command fails 
+  build:
+    commands:
+      - echo Entered the build phase...
+      - mvn package
+      - docker build -t $TAG_NAME .
+      - docker tag $TAG_NAME $TAG_NAME
+    finally:
+      - echo This always runs even if the install command fails
+  post_build:
+    commands:
+      - echo Entered the post_build phase...
+      - $(aws ecr get-login --no-include-email)
+      - docker push $TAG_NAME
+artifacts:
+  files:
+    - target/opstest.jar
+  discard-paths: yes
+cache:
+  paths:
+    - '/root/.m2/**/*'
