@@ -9,7 +9,6 @@ phases:
       - IMAGE_TAG=${COMMIT_HASH:=latest}
       - echo $AWS_DEFAULT_REGION
       - echo $REPOSITORY_URI
-      - echo $TAG_NAME
       # Installation
       - echo Entered the install phase...
       - apt-get update -y
