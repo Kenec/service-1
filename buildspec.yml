@@ -8,6 +8,8 @@ phases:
       - ARTIFACT=opstest
       - ARTIFACT_TYPE=.jar
       - TAG_NAME=$REPOSITORY_URI:$ARTIFACT
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
       - echo $AWS_DEFAULT_REGION
       - echo $ARTIFACT
       - echo $ARTIFACT_TYPE
@@ -32,17 +34,21 @@ phases:
     commands:
       - echo Entered the build phase...
       - mvn package
-      - docker build -t $TAG_NAME .
-      - docker tag $TAG_NAME $TAG_NAME
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
     finally:
       - echo This always runs even if the install command fails
   post_build:
     commands:
       - echo Entered the post_build phase...
-      - $(aws ecr get-login --region us-east-2 --no-include-email)
-      - docker push $TAG_NAME
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"hello-world","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files:
+    - imagedefinitions.json
     - target/opstest.jar
   discard-paths: yes
 cache:
