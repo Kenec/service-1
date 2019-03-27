@@ -14,7 +14,7 @@ public class SuchController {
 	public String suchHello(){
 
 		String azUrl = "http://169.254.169.254/latest/meta-data/placement/availability-zone";
-		String timeUrl = "http://internal-opstest-internal-elb-1231411238.us-east-2.elb.amazonaws.com:3000";
+		String timeUrl = System.getenv("TIME_URL") + ":" + System.getenv("TIME_PORT");
 		RestTemplate restTemplate = new RestTemplate();
 
 		String result = restTemplate.getForObject(timeUrl, String.class);

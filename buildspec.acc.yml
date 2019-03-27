@@ -7,7 +7,7 @@ phases:
       - REPOSITORY_URI=839162139045.dkr.ecr.us-east-2.amazonaws.com/opstest-repository
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
-      - CONTAINER=opstest-container
+      - CONTAINER=acc-opstest-container
       - echo $AWS_DEFAULT_REGION
       - echo $REPOSITORY_URI
       # Installation
