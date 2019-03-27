@@ -7,6 +7,7 @@ phases:
       - REPOSITORY_URI=839162139045.dkr.ecr.us-east-2.amazonaws.com/opstest-repository
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - CONTAINER=dev-opstest-container
       - echo $AWS_DEFAULT_REGION
       - echo $REPOSITORY_URI
       # Installation
@@ -39,7 +40,7 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
-      - printf '[{"name":"dev-opstest-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files:
     - imagedefinitions.json
